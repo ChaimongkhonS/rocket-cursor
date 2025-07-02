@@ -1,0 +1,225 @@
+<!-- Created by MagicCode.dev -->
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magic Code</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: linear-gradient(45deg, midnightblue, darkblue, navy);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        position: relative;
+        overflow: hidden;
+        font-family: "Orbitron", monospace;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(
+            2px 2px at 20px 30px,
+            #fff,
+            transparent
+          ),
+          radial-gradient(
+            2px 2px at 40px 70px,
+            rgba(255, 255, 255, 0.8),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 10px 10px,
+            rgba(255, 255, 255, 0.6),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 80px 50px,
+            rgba(255, 255, 255, 0.5),
+            transparent
+          );
+        background-repeat: repeat;
+        background-size: 100px 100px;
+        animation: twinkle 3s ease-in-out infinite alternate;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes twinkle {
+        0% {
+          opacity: 0.3;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .trail {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: trailFade 2.5s ease-out forwards;
+        filter: blur(2px);
+      }
+
+      .rocket-cursor {
+        position: fixed;
+        width: 35px;
+        height: 45px;
+        pointer-events: none;
+        font-size: 24px;
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        user-select: none;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+      }
+
+      .main-title {
+        background: linear-gradient(45deg, springgreen, cyan, magenta, yellow);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: rainbowText 3s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        position: relative;
+        z-index: 10;
+      }
+
+      @keyframes rainbowText {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes trailFade {
+        0% {
+          opacity: 1;
+          transform: scale(0.1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.5);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(4);
+        }
+      }
+    </style>
+  </head>
+  <body class="h-screen">
+    <div id="cursor" class="rocket-cursor opacity-0">🚀</div>
+
+    <div
+      class="text-center h-screen flex flex-col items-center justify-center relative z-10"
+    >
+      <h1 class="main-title text-6xl font-black mb-4">MAGIC CODE</h1>
+    </div>
+
+    <script>
+      const cursor = document.getElementById("cursor");
+      const trailColors = [
+        "radial-gradient(circle, rgba(0, 255, 136, 0.7) 0%, transparent 70%)",
+        "radial-gradient(circle, rgba(0, 204, 255, 0.7) 0%, transparent 70%)",
+        "radial-gradient(circle, rgba(255, 0, 204, 0.7) 0%, transparent 70%)",
+        "radial-gradient(circle, rgba(255, 255, 0, 0.7) 0%, transparent 70%)",
+        "radial-gradient(circle, rgba(255, 107, 53, 0.7) 0%, transparent 70%)",
+        "radial-gradient(circle, rgba(114, 9, 183, 0.7) 0%, transparent 70%)",
+      ];
+
+      let trail = 0,
+        lastX = 0,
+        lastY = 0;
+
+      document.addEventListener("mousemove", (e) => {
+        const deltaX = e.clientX - lastX;
+        const deltaY = e.clientY - lastY;
+        const speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        let rotation = 0;
+        if (speed > 2) {
+          const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+          rotation = angle + 90;
+        }
+
+        cursor.style.transform = `rotate(${rotation}deg) scale(${Math.min(
+          1.5,
+          1 + speed / 100
+        )})`;
+        cursor.style.left = e.clientX - 17 + "px";
+        cursor.style.top = e.clientY - 22 + "px";
+        cursor.style.opacity = "1";
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        if (++trail % 2 === 0) {
+          const t = document.createElement("div");
+          t.className = "trail";
+          const size = 20 + Math.random() * 30;
+          t.style.cssText = `
+            left: ${e.clientX - size / 2}px;
+            top: ${e.clientY - size / 2}px;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${
+              trailColors[Math.floor(Math.random() * trailColors.length)]
+            };
+          `;
+          document.body.appendChild(t);
+          setTimeout(() => t.remove(), 2500);
+        }
+      });
+
+      document.addEventListener("mouseleave", () => {
+        cursor.style.opacity = "0";
+      });
+
+      document.addEventListener("click", (e) => {
+        for (let i = 0; i < 6; i++) {
+          setTimeout(() => {
+            const exp = document.createElement("div");
+            exp.className = "trail";
+            exp.style.cssText = `left:${
+              e.clientX - 40 + Math.random() * 80
+            }px;top:${
+              e.clientY - 40 + Math.random() * 80
+            }px;width:80px;height:80px;background:radial-gradient(circle, white 0%, 
+            transparent 70%);animation-duration:1.5s`;
+            document.body.appendChild(exp);
+            setTimeout(() => exp.remove(), 1500);
+          }, i * 30);
+        }
+      });
+    </script>
+  </body>
+</html>
